@@ -6,38 +6,43 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class Main {
-	private static final int LimiteDeProcessosPorProcessador = 3;
-	static int N = 4;
+	
+	private static final int AMOUNT = 8;
+	private static final int TMT = 50;
+	private static final int N = 4;
+	static int QtdDeProcessosEmExecucao = 0;
+	
 	static Processador[] processadores;
 	static int NCiclosDeProcessamento = 42;
+	static Random gerador = new Random ();
+	
+	/* Gerador de processos. A cada TMT clocks gera AMOUNT processos. */
+	
+	public static void geradorDeProcessos (int tempoDeClock) {
+		int tempo = 0;
+		int numCPU;
+		for (int n = 0; n < AMOUNT; n++){
+			tempo = (gerador.nextInt(20)+1)*1000000;
+			numCPU =  (gerador.nextInt(N)+1);
+			Processo aux = new Processo(numCPU, tempoDeClock, tempo);
+			processadores[numCPU-1].criaProcesso(aux);
+			System.out.println("Processo para a CPU " + numCPU + " de tempo " + tempo);
+			QtdDeProcessosEmExecucao++;
+		}
+	}
+	
 	public static void main(String[] args) {
 		Map<Integer,Processo> ListaDeProcessos = new HashMap<Integer,Processo>();
 		processadores = new Processador[N];
-		int ProcessosPendentes = 0;
 		Processo pAux;
-		
-		try{
-			FileReader arq = new FileReader("entrada.txt");
-		    BufferedReader lerArq = new BufferedReader(arq);
-		    String linha = lerArq.readLine();
-		    while (linha != null) {
-		    	pAux = new Processo(Integer.parseInt(linha.split(" ")[0]),Integer.parseInt(linha.split(" ")[1]),Integer.parseInt(linha.split(" ")[2]));
-		    	ListaDeProcessos.put(ProcessosPendentes++, pAux);
-		    	System.out.printf(pAux.HoraCriacaoTarefa+" "+pAux.NumeroCPUqueCriou+" "+pAux.TempoCPUNecessario+"\n");
-		    	linha = lerArq.readLine(); // lê da segunda até a última linha
-		    }
-		    arq.close();
-	    } catch (IOException e) {
-	    	System.err.printf("Erro na abertura do arquivo: %s.\n",
-	        e.getMessage());
-	    }
 		
 		//Inicialização dos processadores.
 		for(int i = 0; i<N; i++){
-			processadores[i] = new Processador(LimiteDeProcessosPorProcessador,i);
+			processadores[i] = new Processador(AMOUNT/N,i);
 		}
 		
 		//Aqui começa o processamento.		

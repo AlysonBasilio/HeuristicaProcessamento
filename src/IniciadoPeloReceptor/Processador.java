@@ -34,14 +34,14 @@ public class Processador{
 		return aux;
 	}
 	
-	public void criaProcesso(Processo pAux) {
+	public void criaProcesso(Processo aux) {
 		if(ListaDeProcessosASerExecutados.size()==0){
 			NProcessoEmExecucao = var;
 			StatusProcessador = "Executando";
 			StatusFila = "Não Cheia";
-			ListaDeProcessosASerExecutados.put(var++, pAux);
+			ListaDeProcessosASerExecutados.put(var++, aux);
 		}else{
-			ListaDeProcessosASerExecutados.put(var++, pAux);
+			ListaDeProcessosASerExecutados.put(var++, aux);
 			if(ListaDeProcessosASerExecutados.size()>=Limite)
 				StatusFila = "Cheia";
 			else
