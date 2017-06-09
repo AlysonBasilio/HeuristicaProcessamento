@@ -1,4 +1,4 @@
-package IniciadoPeloReceptor;
+package Hibrido;
 
 import java.util.HashMap;
 import java.util.Map;
