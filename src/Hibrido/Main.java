@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Main {
 	
-	private static final int AMOUNT = 70;
+	private static final int AMOUNT = 10;
 	private static final int TMT = 10;
 	private static final int N = 8;
 	private static final int RETRY = 2;
@@ -80,6 +80,23 @@ public class Main {
 						if(processadores[a].StatusFila=="Cheia"){
 							processadores[k].criaProcesso(processadores[a].passaProcesso());
 							System.out.println("Passando Processo de "+a+" para "+k);
+							break;
+						}
+					}
+				} else if((s=="Procura" && processadores[k].StatusFila=="Cheia")){
+					int[] busca = new int[RETRY+1];
+					busca[0]=k;
+					for(int j = 0; j< RETRY; j++){
+						int a = gerador.nextInt(N);
+						while(JaPassouNesseP(a, busca, j)){
+							a = gerador.nextInt(N);
+						}
+						busca[j+1] = a;
+						processadores[k].NDeMsgsEnviadas++;
+						processadores[a].NDeMsgsRecebidas++;
+						if(processadores[a].StatusFila=="Não Cheia"){
+							processadores[a].criaProcesso(processadores[k].passaProcesso());
+							System.out.println("Passando Processo de "+k+" para "+a);
 							break;
 						}
 					}

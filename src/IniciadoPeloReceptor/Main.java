@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Main {
 	
-	private static final int AMOUNT = 70;
+	private static final int AMOUNT = 10;
 	private static final int TMT = 10;
 	private static final int N = 8;
 	private static final int RETRY = 2;
