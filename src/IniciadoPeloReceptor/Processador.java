@@ -6,7 +6,8 @@ import java.util.Map;
 public class Processador{
 	int ID;
 	Map<Integer, Processo> ListaDeProcessosASerExecutados;
-	String Status;
+	String StatusProcessador;
+	String StatusFila;
 	int Limite;
 	int NProcessoEmExecucao;
 	int var = 0;
@@ -19,11 +20,16 @@ public class Processador{
 	
 	Processo passaProcesso(){
 		Processo aux = null;
+		int n1 = 0;
 		for(int n:ListaDeProcessosASerExecutados.keySet()){
 			if(n!=NProcessoEmExecucao){
 				aux = ListaDeProcessosASerExecutados.get(n);
-				ListaDeProcessosASerExecutados.remove(n);
+				n1 = n;
 			}
+		}
+		ListaDeProcessosASerExecutados.remove(n1);
+		if(ListaDeProcessosASerExecutados.size()<Limite){
+			StatusFila = "Não Cheia";
 		}
 		return aux;
 	}
@@ -31,25 +37,37 @@ public class Processador{
 	public void criaProcesso(Processo pAux) {
 		if(ListaDeProcessosASerExecutados.size()==0){
 			NProcessoEmExecucao = var;
-			Status = "Executando";
+			StatusProcessador = "Executando";
+			StatusFila = "Não Cheia";
+			ListaDeProcessosASerExecutados.put(var++, pAux);
+		}else{
+			ListaDeProcessosASerExecutados.put(var++, pAux);
+			if(ListaDeProcessosASerExecutados.size()>=Limite)
+				StatusFila = "Cheia";
+			else
+				StatusFila = "Não Cheia";
 		}
-		ListaDeProcessosASerExecutados.put(var++, pAux);
 	}
 	
 	public void executa(){
 		ListaDeProcessosASerExecutados.get(NProcessoEmExecucao).TempoCPUNecessario--;
+		//Se esse processo acabar, o processador deve avisar que está livre ou iniciar o próximo
+		//processo.
 		if(ListaDeProcessosASerExecutados.get(NProcessoEmExecucao).TempoCPUNecessario==0){
 			System.out.println("Processo que deveria ser executado pela CPU "+ListaDeProcessosASerExecutados.get(NProcessoEmExecucao).NumeroCPUqueCriou+
 					" foi executado por "+ID);
 			ListaDeProcessosASerExecutados.remove(NProcessoEmExecucao);
-			if(ListaDeProcessosASerExecutados.isEmpty()){
-				Status = "Livre";
+			if(ListaDeProcessosASerExecutados.size()==0){
+				StatusProcessador = "Livre";
 			} else{
 				for(int i:ListaDeProcessosASerExecutados.keySet()){
 					NProcessoEmExecucao = i;
-					return;
+					StatusProcessador = "Executando";
+					break;
 				}
 			}
+			if(ListaDeProcessosASerExecutados.size()<Limite)
+				StatusFila = "Não Cheia";	
 		}
 	}
 	
